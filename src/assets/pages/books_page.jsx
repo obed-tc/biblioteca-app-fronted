@@ -123,14 +123,17 @@ const BookPage = () => {
   return (
     <div className="bg-gray-100 min-h-screen ">
       <HeaderComponent />
+
       <div className="flex justify-between">
         <h1 className="text-3xl font-bold text-center">Libros</h1>
-        <button
-          onClick={openAddModal}
-          className="bg-green-500 text-white py-2 px-5 rounded hover:bg-green-600 transition"
-        >
-          + Agregar nuevo libro
-        </button>
+        {rol == "admin" && (
+          <button
+            onClick={openAddModal}
+            className="bg-green-500 text-white py-2 px-5 rounded hover:bg-green-600 transition"
+          >
+            + Agregar nuevo libro
+          </button>
+        )}
       </div>
 
       <div className="max-w-4xl mx-auto">
