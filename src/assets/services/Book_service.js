@@ -8,14 +8,16 @@ const getToken = () => {
   return token ? `Bearer ${token}` : "";
 };
 
-// Función para obtener todos los libros ordenados por un campo especificado
+// Función para obtener todos los libros ordenados por un campo especificado y con búsqueda
 export const getAllLibros = async (
   sortField = "titulo",
-  algorithm = "quick"
+  algorithm = "quick",
+  keysearch = "titulo",
+  search = ""
 ) => {
   try {
     const response = await fetch(
-      `${BASE_URL}/libros?sortField=${sortField}&algorithm=${algorithm}`,
+      `${BASE_URL}/libros?sortField=${sortField}&algorithm=${algorithm}&keysearch=${keysearch}&search=${search}`,
       {
         method: "GET",
         headers: {
@@ -33,7 +35,6 @@ export const getAllLibros = async (
     throw error;
   }
 };
-
 // Función para buscar un libro por un campo específico y su valor
 export const buscarLibro = async (key, value) => {
   try {

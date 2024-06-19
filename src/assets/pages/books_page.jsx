@@ -22,13 +22,22 @@ const BookPage = () => {
   const [sortField, setSortField] = useState("titulo");
   const [sortAlgorithm, setSortAlgorithm] = useState("quick");
 
+  // Nuevos estados para búsqueda
+  const [keysearch, setKeysearch] = useState("titulo");
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     fetchBooks();
-  }, []);
+  }, [sortField, sortAlgorithm, keysearch, search]);
 
   const fetchBooks = async () => {
     try {
-      const fetchedBooks = await getAllLibros(sortField, sortAlgorithm);
+      const fetchedBooks = await getAllLibros(
+        sortField,
+        sortAlgorithm,
+        keysearch,
+        search
+      );
       setBooks(fetchedBooks);
     } catch (error) {
       console.error("Error fetching books:", error.message);
@@ -64,25 +73,6 @@ const BookPage = () => {
       console.error("Error saving book:", error.message);
     }
   };
-
-  // const handleEditBook = async (bookCode) => {
-  //   try {
-  //     const book = await editarLibro(bookCode, {
-  //       codigo: code,
-  //       titulo: title,
-  //       autor: author,
-  //       urlImagen: imageUrl,
-  //     });
-  //     setCode(book.codigo);
-  //     setAuthor(book.autor);
-  //     setTitle(book.titulo);
-  //     setImageUrl(book.urlImagen);
-  //     setIsEditMode(true);
-  //     setIsModalOpen(false);
-  //   } catch (error) {
-  //     console.error("Error editing book:", error.message);
-  //   }
-  // };
 
   const handleDeleteBook = async (bookCode) => {
     try {
@@ -121,12 +111,12 @@ const BookPage = () => {
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen ">
+    <div className="bg-gray-100 min-h-screen">
       <HeaderComponent />
 
       <div className="flex justify-between">
         <h1 className="text-3xl font-bold text-center">Libros</h1>
-        {rol == "admin" && (
+        {rol === "admin" && (
           <button
             onClick={openAddModal}
             className="bg-green-500 text-white py-2 px-5 rounded hover:bg-green-600 transition"
@@ -137,7 +127,6 @@ const BookPage = () => {
       </div>
 
       <div className="max-w-4xl mx-auto">
-        <h2 className="text-2xl font-semibold mb-4">Lista de libros</h2>
         <div className="flex items-center space-x-4 my-4">
           <select
             value={sortAlgorithm}
@@ -159,9 +148,33 @@ const BookPage = () => {
           </select>
           <button
             onClick={fetchBooks}
-            className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
+            className="bg-[#dc8524] text-white p-2 rounded hover:bg-[#dc8524] transition"
           >
             Ordenar
+          </button>
+        </div>
+        <div className="flex items-center space-x-4 my-4">
+          <select
+            value={keysearch}
+            onChange={(e) => setKeysearch(e.target.value)}
+            className="p-2 border border-gray-300 rounded"
+          >
+            <option value="titulo">Título</option>
+            <option value="autor">Autor</option>
+            <option value="codigo">Código</option>
+          </select>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar..."
+            className="p-2 border border-gray-300 rounded"
+          />
+          <button
+            onClick={fetchBooks}
+            className="bg-[#dc8524] text-white p-2 rounded hover:bg-[#c28138] transition"
+          >
+            Buscar
           </button>
         </div>
 
@@ -173,7 +186,7 @@ const BookPage = () => {
             >
               <div className="bg-white px-20 py-5 rounded-lg shadow-lg flex items-center justify-between">
                 <Book book={book} />
-                {rol == "admin" && (
+                {rol === "admin" && (
                   <div className="space-x-2 ml-[500px] flex flex-col items-center">
                     <button
                       onClick={() => openEditModal(book)}
@@ -194,27 +207,6 @@ const BookPage = () => {
           ))}
         </ul>
       </div>
-      {/* <ul className="flex flex-col justify-center items-center space-y-20">
-        <div className="bg-white px-20 py-5 rounded-lg shadow-lg flex items-center justify-between">
-          <Book />
-          <div className="space-x-2 ml-[500px]">
-            <button
-              onClick={() => handleEditBook(book.codigo)}
-              className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600 transition"
-            >
-              Editar
-            </button>
-            <button
-              onClick={() => handleDeleteBook(book.codigo)}
-              className="bg-red-500 text-white p-2 rounded hover:bg-red-600 transition"
-            >
-              Eliminar
-            </button>
-          </div>
-        </div>
-        <Book />
-        <Book />
-      </ul> */}
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
@@ -259,7 +251,7 @@ const BookPage = () => {
               </button>
               <button
                 onClick={handleSaveBook}
-                className="bg-blue-500 text-white p-2 rounded hover:bg-blue-600 transition"
+                className="bg-[#dc8524] text-white p-2 rounded hover:bg-[#dc8524] transition"
               >
                 {isEditMode ? "Guardar cambios" : "Guardar libro"}
               </button>
